@@ -23,3 +23,15 @@ Converting the MIF instances to asprilo format:
 ```bash
 clingo --out-atomf=%s. --out-ifs="\n" -q1 resources/mif_to_asprilo.lp resources/Instances/test_s5_a2_square.lp | grep init > out.lp
 ```
+
+# Errors
+
+```
+TypeError: arguments did not match any overloaded call:
+  QRect(): too many arguments
+  QRect(int, int, int, int): argument 1 has unexpected type 'float'
+  QRect(QPoint, QPoint): argument 1 has unexpected type 'float'
+  QRect(QPoint, QSize): argument 1 has unexpected type 'float'
+  QRect(QRect): argument 1 has unexpected type 'float'
+Aborted (core dumped)
+```
