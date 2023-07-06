@@ -16,6 +16,11 @@ Pruning project for MAPF
 	2. Expand our selection of verticies to all cells reachabe by 1 from the conflict cells
 	3. Try solving again ...
 
+# Encoding
+
++ Actions: `occurs(object(robot,ID),action(move,(DX,DY)),TIMESTEP).`
++ Agent-Positions: `position(object(robot,ID),value(at,(X,Y)))`
+
 # Commands
 
 Converting the MIF instances to asprilo format:
