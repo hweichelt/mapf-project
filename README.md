@@ -19,7 +19,7 @@ Pruning project for MAPF
 # Encoding
 
 + Actions: `occurs(object(robot,ID),action(move,(DX,DY)),TIMESTEP).`
-+ Agent-Positions: `position(object(robot,ID),value(at,(X,Y)))`
++ Agent-Positions: `position(object(robot,ID),value(at,(X,Y)), TIMESTEP).`
 
 # Commands
 
