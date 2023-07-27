@@ -1,17 +1,15 @@
-time(1..horizon).
+SELECT ALL nodes IN shortest_path FOR every agent
 
+CREATE new subgraph out with these nodes (ALTERNATIVE, but maybe worse: keep original instance, but make everything else obstacle)
 
-
-edge((X2, Y2),(X1, Y1)) :- edge((X1, Y1),(X2, Y2)).		#NEEDED?
-
-
-
-legalmove((X,Y)) :- |X+Y|=1, X=-1..1, Y=-1..1.		#GRID BASED
-
-legalmove((X,Y)) :- vertex((X1, Y1)), vertex((X2, Y2)), edge((X1,Y1), (X2, Y2)), (X,Y)=(X1-X2, Y1-Y2), |X+Y|=1, X=-1..1, Y=-1..1.	#A TRY TO DEFINE IT VIA EXISTING VERTICES AND EDGES
-
-#MAYBE ALSO POSSIBLE TO CONSIDER NON EXISTING VERTICES FOR THIS, AS THE ENCODING IS KINDA GRID BASED
-
-
-
-neighbouring((X1,Y1), (X2, Y2), (DX, DY)) :- vertex((X1, Y1)), vertex((X2, Y2)), edge((X1,Y1), (X2, Y2)), legalmove((DX,DY)).
+REPEAT
+RUN conflict_checker (OUTPUT: conflict_nodes)  #as there possibly are many conflict nodes for a pair of agents (going through the same corridor, at thje same time and in the same direction, only the conflict node with the lowest time should be selected)
+IF conflict_node != null:
+	conflict_nodes_unhandled = conflict_nodes 
+	FOR every conflict_nodes_unhandled:
+		REPEAT
+			EXPAND graph by 1 in every legal direction #(obstacles arent legal directions)
+		UNTIL this_node has new_nodes
+		conflict_nodes_unhandled -= this_node
+RUN solver
+UNTIL solution found
