@@ -1,6 +1,6 @@
 % PRUNING
 
-#const expansion_depth=2.
+% #const expansion_depth=N.
 % input: conflict_node(value(at,(_,_)))
 
 % INITIAL POSITION
@@ -11,7 +11,7 @@ position(R, value(at,(X+DX,Y+DY)), T+1) :- occurs(R, action(move,(DX,DY)), T+1),
 % INITIAL CONFLICT NODE
 away_from((X,Y), (X,Y), 0) :- conflict_node(value(at,(X,Y))).
 % GENERATE DISTANCE FROM CONFLICT
-away_from((X_CONFLICT,Y_CONFLICT), (X2,Y2), D+1) :- away_from((X_CONFLICT,Y_CONFLICT), (X,Y), D), neighbours((X,Y), (X2,Y2)), D < expansion_depth.
+away_from((X_CONFLICT,Y_CONFLICT), (X2,Y2), D+1) :- away_from((X_CONFLICT,Y_CONFLICT), (X,Y), D), neighbours((X,Y), (X2,Y2)), D+1 < expansion_depth.
 
 expanded_node(X,Y) :- away_from(_, (X,Y),_).
 

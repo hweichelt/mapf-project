@@ -1,6 +1,6 @@
 % SOLVER
 
-#const upper_bound=10.
+#const upper_bound=50.
 
 %Set time horizon
 timestep(1..upper_bound).
@@ -12,7 +12,8 @@ robot(R) :- init(object(robot,R),value(at,_)).
 goal(S, V) :- init(object(shelf,S),value(at,V)).
 
 % Nodes
-node(V) :- init(object(node,_),value(at,V)).
+% node(V) :- init(object(node,_),value(at,V)).
+node((X,Y)) :- expanded_node(X,Y).
 
 % Generate Directions
 direction((X,Y)) :- X=-1..1, Y=-1..1, |X+Y|=1.
