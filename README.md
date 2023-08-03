@@ -16,6 +16,29 @@ Pruning project for MAPF
 	2. Expand our selection of verticies to all cells reachabe by 1 from the conflict cells
 	3. Try solving again ...
 
+## Usage
+
+We provided a python script which uses the clingo API to execute our pruning approach.
+
+For provding the MIF input file and values for the `EXPANSION_HORIZON` as well as the `TIME_HORIZON` just modify the constants in lines `11-13` of the (solving.lp)[encoding/solving.lp] encoding file.
+
+Then for executing our approach you can just run this on your command line.
+
+```bash
+python3 enconding/main.py
+```
+
+Necessary libraries are: 
++ clingo
+
+These can be installed using pip:
+
+```bash
+pip install clingo
+```
+
+The output of our encoding is provided in asprilo format to aid easy visualization using the asprilo visualizer.
+
 # Encoding
 
 + Actions: `occurs(object(robot,ID),action(move,(DX,DY)),TIMESTEP).`
