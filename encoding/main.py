@@ -1,13 +1,16 @@
-import clingo
-
+from time import perf_counter
 from typing import List, Tuple, Optional, Union
 from pathlib import Path
+
+import clingo
+
 
 SCRIPT_PATH = Path(__file__).parent
 
 # USER INPUT
-MIF_INSTANCE = SCRIPT_PATH.joinpath("../resources/Instances/test_s5_a2_exchange(hard).lp")
-EXPANSION_HORIZON = 10
+MIF_INSTANCE = SCRIPT_PATH.joinpath("../resources/Instances/maze_s10_a30.lp")
+EXPANSION_HORIZON = 20
+TIME_HORIZON = 40
 
 MIF_ASPRILO_CONVERTER_PATH = SCRIPT_PATH.joinpath("convert_mif/mif_to_asprilo.lp")
 CONFLICT_FINDER_PATH = SCRIPT_PATH.joinpath("conflict_check/check_conflicts.lp")
@@ -52,7 +55,9 @@ def solve(
 
 
 def parse_asp_program(symbol_list: List[clingo.Symbol]) -> str:
-    return ".\n".join([str(s) for s in symbol_list]) + "."
+    out = ".\n".join([str(s) for s in symbol_list])
+    out = out + "." if out else out
+    return out
 
 
 def solve_mapf_with_conflict_pruning(mif_instance_string: str, verbose: int = 0) -> Optional[List[clingo.Symbol]]:
@@ -66,27 +71,48 @@ def solve_mapf_with_conflict_pruning(mif_instance_string: str, verbose: int = 0)
     pruning_program = read_file(PRUNING_ENCODING_PATH)
     mapf_solver = read_file(MAPF_SOLVER_PATH)
 
+    # compute the single agents path nodes
+    single_agen_path_nodes = solve(
+        ["#const expansion_depth=0.", asprilo_instance, pruning_program],
+        [('expanded_node', 2)]
+    )
+    single_agen_path_nodes_string = parse_asp_program(single_agen_path_nodes)
+
     # find initial conflicts from single agent plans
     conflicts = solve(
         [asprilo_instance, conflict_finder_program],
         [('conflict_node', 1)]
     )
+
+    # if there are no conflicts just return the single agent paths without solving
+    if not conflicts:
+        if verbose > 0:
+            print("NO CONFLICTS FOUND -> NO EXPANSION")
+        solution = solve(
+            [
+                mapf_solver,
+                asprilo_instance,
+                single_agen_path_nodes_string,
+                f"#const upper_bound={TIME_HORIZON}."
+            ],
+            [('occurs_final', 3)]
+        )
+        return solution
+
     conflicts_string = parse_asp_program(conflicts)
     if verbose > 0:
         print("CONFLICTS:", [str(s) for s in conflicts])
 
-    # setup for loop with nodes from the single agent plans
-    last_nodes = solve(
-        ["#const expansion_depth=0.", asprilo_instance, conflicts_string, pruning_program],
-        [('expanded_node', 2)]
-    )
+    print(conflicts_string)
 
+    # setup for loop with nodes from the single agent plans
+    last_nodes = single_agen_path_nodes
     expansion_depth = 0
     while True:
+        expansion_depth += 1
         # increase expansion_depth until horizon is reached
         if verbose > 0:
             print("+ EXPANSION_DEPT:", expansion_depth)
-        expansion_depth += 1
         if expansion_depth >= EXPANSION_HORIZON:
             break
 
@@ -106,7 +132,12 @@ def solve_mapf_with_conflict_pruning(mif_instance_string: str, verbose: int = 0)
         # try solving with new further expanded node set
         expanded_nodes_string = parse_asp_program(expanded_nodes)
         solution = solve(
-            [mapf_solver, asprilo_instance, expanded_nodes_string],
+            [
+                mapf_solver,
+                asprilo_instance,
+                expanded_nodes_string,
+                f"#const upper_bound={TIME_HORIZON}."
+            ],
             [('occurs_final', 3)]
         )
 
@@ -125,4 +156,9 @@ def solve_mapf_with_conflict_pruning(mif_instance_string: str, verbose: int = 0)
 if __name__ == "__main__":
     mif_instance = read_file(MIF_INSTANCE)
 
+    start_t = perf_counter()
     mapf_solution = solve_mapf_with_conflict_pruning(mif_instance, verbose=1)
+    end_t = perf_counter()
+
+    print("SOLUTION:", ". ".join([str(s) for s in mapf_solution]).replace("occurs_final", "occurs") + ".")
+    print("TIME:", "%.4f" % (end_t - start_t), "s")
