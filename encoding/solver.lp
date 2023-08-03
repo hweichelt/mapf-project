@@ -1,6 +1,6 @@
 % SOLVER
 
-#const upper_bound=50.
+%#const upper_bound=N.
 
 %Set time horizon
 timestep(1..upper_bound).
@@ -39,7 +39,6 @@ position(R, V, T) :- not movement(R, _, T), position(R, V, T-1), robot(R), times
 
 conflict_vertex(V, T) :- position(R1, V, T), position(R2, V, T), R1!=R2.
 conflict_swap(V1, V2, T) :- position(R1, V1, T), position(R1, V2, T+1), position(R2, V2, T), position(R2, V1, T+1), neighbours(V1, V2).
-
 
 % Constraints on conflicting plans
 :- conflict_swap(_,_,_).
