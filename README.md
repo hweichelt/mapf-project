@@ -60,19 +60,19 @@ The output of our encoding is provided in asprilo format to aid easy visualizati
 
 
 
-| Instance                  | grid size | agents | Solving time (no pruning) in s | Solving time (with pruning) in s |
-| ------------------------- | --------- | ------ | -------------------------: | ---------------------------: |
-| test_s5_a1_smol           |$5\times5$| $01$       | -                      | $0.6711$                      |
-| test_s5_a2_detour         |$5\times5$| $02$       | -                      | $66.5636$                        |
-| test_s5_a2_exchange(hard) |$5\times5$| $02$       | -                      | $1.6703$                     |
-| test_s5_a2_square         |$5\times5$| $02$       | -                      | $1.6369$                        |
-| test_s4x2_a6_exchange     |$4\times2$| $06$       | -                      | $6.8939$                        |
-| maze_s10_a25              |$10\times10$| $25$       | -                      | TIMEOUT                        |
-| maze_s10_a30              |$10\times10$| $30$       | -                      | TIMEOUT                        |
-| random_s10_a15_c50        |$10\times10$| $15$       | -                      | $47.1819$                        |
-| random_s10_a20_c55        |$10\times10$| $20$       | -                      | $39.8370$                       |
-| room_s10_a15_w1           |$10\times10$| $15$       | -                      | $52.3624$                        |
-| room_s10_a30_w5           |$10\times10$| $30$       | -                      | $89.7547$                        |
+| Instance                  | grid size | agents | Solving time (no pruning) in s |           Solving time (with pruning) in s |
+| ------------------------- | --------- | ------ |-------------------------------:|-------------------------------------------:|
+| test_s5_a1_smol           |$5\times5$| $01$       |                        $0.190$ |                                   $0.6711$ |
+| test_s5_a2_detour         |$5\times5$| $02$       |                        $0.548$ |                                  $66.5636$ |
+| test_s5_a2_exchange(hard) |$5\times5$| $02$       |                        $0.548$ |                                   $1.6703$ |
+| test_s5_a2_square         |$5\times5$| $02$       |                        $0.566$ |                                   $1.6369$ |
+| test_s4x2_a6_exchange     |$4\times2$| $06$       |                        $2.734$ |                                   $6.8939$ |
+| maze_s10_a25              |$10\times10$| $25$       |    UNSAT (Hor:68 -> 2580.906s) |            TIMEOUT (Hor:68 -> 2405.3621 s) |
+| maze_s10_a30              |$10\times10$| $30$       |    UNSAT (Hor:68 -> 1575.236s) |            TIMEOUT (Hor:68 -> 1184.8219 s) |
+| random_s10_a15_c50        |$10\times10$| $15$       |                       $14.177$ |                                  $47.1819$ |
+| random_s10_a20_c55        |$10\times10$| $20$       |                       $41.690$ |                                  $39.8370$ |
+| room_s10_a15_w1           |$10\times10$| $15$       |                       $12.918$ |                                  $52.3624$ |
+| room_s10_a30_w5           |$10\times10$| $30$       |                       $51.563$ |                                  $89.7547$ |
 
 
 The solving time of `test_s5_a2_detour` could probably also be reduced further, if instead of just solving when new nodes are expanded, it is ensured that all conflict nodes are expanded before calling the solver. This is due to the most time during the execution of our approach being spent by the solver. So by making sure that every conflict node is expanded we reduce the amount of solver calls and thus the total runtime. 
